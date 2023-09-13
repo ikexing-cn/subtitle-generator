@@ -1,15 +1,12 @@
 import { file } from 'bun'
 import { resolve } from 'path'
 import { unlinkSync } from 'node:fs'
-import { resolve as nResolve } from 'node:path'
 
 const input = '文案.txt'
 const output = '字幕.srt'
 const filterWords = ['预览', '标题', '链接', '源码']
 
-const fullPath = (_input: string, isNode?: boolean) => isNode 
-  ? nResolve(import.meta.dir, _input)
-  : resolve(import.meta.dir, _input)
+const fullPath = (_input: string) =>resolve(import.meta.dir, _input)
 
 function resolveSrtContent(content: string, index: number) {
   const format = `00:00:${index - 10 >= 0 ? index : `0${index}`},000 --> 00:00:0${index + 1},000`
