@@ -14,6 +14,9 @@ const fullPath = (_input: string) => isDev
   ? resolve(import.meta.dir, '.dev-dir', _input)
   : resolve(import.meta.dir, _input)
 
+// FIXME: bun does't supports chinese dir
+const unlinkSyncCompat = (uri: string) => unlinkSync(uri)
+
 function resolveSrtContent(content: string, index: number) {
   const time = (_index = index) => _index - 10 >= 0 ? _index : `0${_index}`
   const format = `${index + 1}\n00:00:${time()},000 --> 00:00:${time(index + 1)},000`
@@ -21,7 +24,7 @@ function resolveSrtContent(content: string, index: number) {
 }
 
 for (const entry of await fg(fullPath('*.zip')))
-  unlinkSync(entry)
+  unlinkSyncCompat(entry)
 
 const inputPath = fullPath(input)
 const inputFile = file(inputPath)
@@ -30,7 +33,7 @@ const inputFileContent = await inputFile.text()
 const outputPath = fullPath(output)
 const outputFile = file(outputPath)
 if (await outputFile.exists())
-  unlinkSync(outputPath)
+  unlinkSyncCompat(outputPath)
 
 const write = outputFile.writer()
 
@@ -56,4 +59,5 @@ toZipStream.addEntry(outputPath)
 toZipStream.addEntry(screenFlowPath)
 toZipStream.pipe(createWriteStream(fullPath(`${title}.zip`)) as any)
 
-unlinkSync(outputPath)
+unlinkSyncCompat(outputPath)
+!isDev && unlinkSyncCompat(screenFlowPath)
