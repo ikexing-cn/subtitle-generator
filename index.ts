@@ -59,5 +59,7 @@ toZipStream.addEntry(outputPath)
 toZipStream.addEntry(screenFlowPath)
 toZipStream.pipe(createWriteStream(fullPath(`${title}.zip`)) as any)
 
-unlinkSyncCompat(outputPath)
-!isDev && unlinkSyncCompat(screenFlowPath)
+process.on('beforeExit', () => {
+  unlinkSyncCompat(outputPath)
+  !isDev && unlinkSyncCompat(screenFlowPath)
+})
